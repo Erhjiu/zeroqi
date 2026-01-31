@@ -209,13 +209,6 @@ template {
 }
 .fontawesomeIcon,
 .custom-hr:before,
-.container h1:before,
-.container h2:before,
-.container h3:before,
-.container h4:before,
-.container h5:before,
-.container h6:before,
-.container hr:before,
 #post .post-copyright:before,
 #post #post-outdate-notice:before,
 .note:not(.no-icon)::before,
@@ -300,24 +293,20 @@ template {
   object-fit: cover;
 }
 .list-beauty,
-.category-lists ul,
-#algolia-search .search-dialog .ais-Hits-list {
+.category-lists ul {
   list-style: none;
 }
 .list-beauty li,
-.category-lists ul li,
-#algolia-search .search-dialog .ais-Hits-list li {
+.category-lists ul li {
   position: relative;
   padding: 0.12em 0.4em 0.12em 1.4em;
 }
 .list-beauty li:hover:before,
-.category-lists ul li:hover:before,
-#algolia-search .search-dialog .ais-Hits-list li:hover:before {
+.category-lists ul li:hover:before {
   border-color: var(--pseudo-hover);
 }
 .list-beauty li:before,
-.category-lists ul li:before,
-#algolia-search .search-dialog .ais-Hits-list li:before {
+.category-lists ul li:before {
   position: absolute;
   top: 0.67em;
   left: 0;
@@ -335,7 +324,6 @@ template {
   transition: all 0.3s ease-out;
 }
 .custom-hr,
-.container hr,
 .search-dialog hr {
   position: relative;
   margin: 40px auto;
@@ -343,12 +331,10 @@ template {
   width: calc(100% - 4px);
 }
 .custom-hr:hover:before,
-.container hr:hover:before,
 .search-dialog hr:hover:before {
   left: calc(95% - 20px);
 }
 .custom-hr:before,
-.container hr:before,
 .search-dialog hr:before {
   position: absolute;
   top: -10px;
@@ -1338,7 +1324,7 @@ canvas:not(#ribbon-canvas),
   }
 }
 :root {
-  --global-font-size: 16px;
+  --global-font-size: 17px;
   --global-bg: #fff;
   --font-color: #4c4948;
   --hr-border: #a4d8fa;
@@ -1385,7 +1371,7 @@ body {
   background: var(--global-bg);
   color: var(--font-color);
   font-size: var(--global-font-size);
-  font-family: 'Noto Sans SC', sans-serif;
+  font-family: 'Noto Serif SC', 'Noto Sans SC', sans-serif;
   line-height: 2;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   scroll-behavior: smooth;
@@ -1499,13 +1485,6 @@ a {
 a:hover {
   color: #49b1f5;
 }
-#site-title,
-#site-subtitle,
-.site-name,
-#aside-content .author-info-name,
-#aside-content .author-info-description {
-  font-family: 'Playfair Display', cursive;
-}
 .text-center {
   text-align: center;
 }
@@ -1541,14 +1520,14 @@ blockquote > :last-child {
   margin-bottom: 0 !important;
 }
 :root {
-  --hl-color: #eff;
-  --hl-bg: #212121;
-  --hltools-bg: #1c1c1c;
-  --hltools-color: rgba(238,255,255,0.8);
-  --hlnumber-bg: #212121;
-  --hlnumber-color: rgba(238,255,255,0.5);
-  --hlscrollbar-bg: #353535;
-  --hlexpand-bg: linear-gradient(180deg, rgba(33,33,33,0.6), rgba(33,33,33,0.9));
+  --hl-color: #8f93a2;
+  --hl-bg: #0f111a;
+  --hltools-bg: #0b0d14;
+  --hltools-color: #8f93a2;
+  --hlnumber-bg: #0f111a;
+  --hlnumber-color: rgba(143,147,162,0.5);
+  --hlscrollbar-bg: #1e2234;
+  --hlexpand-bg: linear-gradient(180deg, rgba(15,17,26,0.6), rgba(15,17,26,0.9));
 }
 [data-theme='dark'] {
   --hl-color: rgba(255,255,255,0.7);
@@ -1576,7 +1555,7 @@ figure.highlight pre .meta {
   color: #c792ea;
 }
 figure.highlight pre .comment {
-  color: #969896;
+  color: rgba(101,115,126,0.8);
 }
 figure.highlight pre .variable,
 figure.highlight pre .attribute,
@@ -1639,7 +1618,7 @@ figure.highlight pre .javascript .function {
   color: #c792ea;
 }
 .container figure.highlight .line.marked {
-  background-color: rgba(97,97,97,0.314);
+  background-color: rgba(113,124,180,0.314);
 }
 .container figure.highlight table {
   display: block;
@@ -1673,8 +1652,8 @@ figure.highlight pre .javascript .function {
 }
 .container pre,
 .container code {
-  font-size: 14px;
-  font-family: 'Fira Code', monospace !important;
+  font-size: 0.92em;
+  font-family: consolas, Menlo, monospace, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
   border-radius: 6px;
 }
 .container code {
@@ -1703,7 +1682,7 @@ figure.highlight pre .javascript .function {
 .container figure.highlight figcaption,
 .container figure.highlight .caption {
   padding: 6px 0 2px 14px;
-  font-size: 14px;
+  font-size: 0.92em;
   line-height: 1em;
 }
 .container figure.highlight figcaption a,
@@ -1748,7 +1727,7 @@ figure.highlight pre .javascript .function {
   height: 2.15em;
   background: var(--hltools-bg);
   color: var(--hltools-color);
-  font-size: 14px;
+  font-size: 0.92em;
   overflow: hidden;
 }
 .container .highlight-tools > * {
@@ -1829,8 +1808,8 @@ figure.highlight pre .javascript .function {
 .container figure.highlight {
   margin: 0 0 24px;
   border-radius: 7px;
-  -webkit-box-shadow: 0 5px 10px 0 rgba(0,0,0,0.4);
-  box-shadow: 0 5px 10px 0 rgba(0,0,0,0.4);
+  -webkit-box-shadow: 0 5px 10px 0 rgba(15,17,26,0.4);
+  box-shadow: 0 5px 10px 0 rgba(15,17,26,0.4);
   -webkit-transform: translateZ(0);
 }
 .container figure.highlight .highlight-tools .macStyle {
@@ -4055,113 +4034,6 @@ figure.highlight pre .javascript .function {
 .container hr {
   margin: 20px 0;
 }
-.container h1,
-.container h2,
-.container h3,
-.container h4,
-.container h5,
-.container h6 {
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  -o-transition: all 0.2s ease-out;
-  -ms-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
-}
-.container h1:before,
-.container h2:before,
-.container h3:before,
-.container h4:before,
-.container h5:before,
-.container h6:before {
-  position: absolute;
-  top: calc(50% - 7px);
-  left: 0;
-  color: #f47466;
-  content: '\f0c1';
-  line-height: 1;
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  -o-transition: all 0.2s ease-out;
-  -ms-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
-}
-.container h1:hover:before,
-.container h2:hover:before,
-.container h3:hover:before,
-.container h4:hover:before,
-.container h5:hover:before,
-.container h6:hover:before {
-  color: #49b1f5;
-}
-.container h1 {
-  padding-left: 28px;
-}
-.container h1:before {
-  font-size: 18px;
-}
-.container h1:hover {
-  padding-left: 32px;
-}
-.container h2 {
-  padding-left: 26px;
-}
-.container h2:before {
-  font-size: 16px;
-}
-.container h2:hover {
-  padding-left: 30px;
-}
-.container h3 {
-  padding-left: 24px;
-}
-.container h3:before {
-  font-size: 14px;
-}
-.container h3:hover {
-  padding-left: 28px;
-}
-.container h4 {
-  padding-left: 22px;
-}
-.container h4:before {
-  font-size: 12px;
-}
-.container h4:hover {
-  padding-left: 26px;
-}
-.container h5 {
-  padding-left: 20px;
-}
-.container h5:before {
-  font-size: 10px;
-}
-.container h5:hover {
-  padding-left: 24px;
-}
-.container h6 {
-  padding-left: 20px;
-}
-.container h6:before {
-  font-size: 10px;
-}
-.container h6:hover {
-  padding-left: 24px;
-}
-.container ol p,
-.container ul p {
-  margin: 0 0 8px;
-}
-.container li::marker {
-  color: #49b1f5;
-  font-weight: 600;
-  font-size: 1.05em;
-}
-.container li:hover::marker {
-  color: var(--pseudo-hover);
-}
-.container ul > li {
-  list-style-type: circle;
-}
 #post .tag_share:after {
   display: block;
   clear: both;
@@ -4471,21 +4343,6 @@ figure.highlight pre .javascript .function {
     display: none;
   }
 }
-#rightside #go-up .scroll-percent {
-  display: none;
-}
-#rightside #go-up.show-percent .scroll-percent {
-  display: block;
-}
-#rightside #go-up.show-percent .scroll-percent + i {
-  display: none;
-}
-#rightside #go-up:hover .scroll-percent {
-  display: none;
-}
-#rightside #go-up:hover .scroll-percent + i {
-  display: block;
-}
 #sidebar #menu-mask {
   position: fixed;
   z-index: 102;
@@ -4645,20 +4502,6 @@ figure.highlight pre .javascript .function {
 }
 .container .aplayer {
   margin: 0 0 20px;
-}
-.container .aplayer ol,
-.container .aplayer ul {
-  margin: 0;
-  padding: 0;
-}
-.container .aplayer ol li,
-.container .aplayer ul li {
-  margin: 0;
-  padding: 0 15px;
-}
-.container .aplayer ol li:before,
-.container .aplayer ul li:before {
-  content: none;
 }
 .snackbar-container.snackbar-css {
   border-radius: 5px;
@@ -6421,93 +6264,4 @@ blockquote.pullquote.right {
   z-index: 1000;
   display: none;
   background: rgba(0,0,0,0.6);
-}
-#algolia-search .search-dialog .ais-SearchBox input {
-  padding: 5px 14px;
-  width: 100%;
-  outline: none;
-  border: 2px solid #49b1f5;
-  border-radius: 40px;
-  background: var(--search-bg);
-  color: var(--search-input-color);
-}
-#algolia-search .search-dialog .ais-SearchBox .ais-SearchBox-loadingIndicator {
-  position: absolute;
-  top: 18px;
-  left: 67px;
-}
-#algolia-search .search-dialog .ais-Hits-list {
-  margin: 0;
-  padding: 0;
-}
-#algolia-search .search-dialog .ais-Hits-list a {
-  color: var(--search-a-color);
-}
-#algolia-search .search-dialog .ais-Hits-list a:hover {
-  color: #49b1f5;
-}
-#algolia-search .search-dialog .ais-Hits-list mark {
-  background: transparent;
-  color: #f47466;
-  font-weight: bold;
-}
-#algolia-search .search-dialog .algolia-hits-item-title {
-  font-weight: 600;
-}
-#algolia-search .search-dialog .algolia-hit-item-content {
-  margin: 0 0 8px;
-  word-break: break-word;
-}
-#algolia-search .search-dialog .ais-Pagination {
-  margin: 15px 0 0;
-  padding: 0;
-  text-align: center;
-}
-#algolia-search .search-dialog .ais-Pagination .ais-Pagination-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-#algolia-search .search-dialog .ais-Pagination .ais-Pagination-item {
-  display: inline;
-  margin: 0 4px;
-  padding: 0;
-}
-#algolia-search .search-dialog .ais-Pagination .ais-Pagination-item .ais-Pagination-link {
-  display: inline-block;
-  min-width: 24px;
-  height: 24px;
-  text-align: center;
-  line-height: 24px;
-  border-radius: 6px;
-}
-#algolia-search .search-dialog .ais-Pagination .ais-Pagination-item--selected a {
-  background: #00c4b6;
-  color: #eee;
-  cursor: default;
-}
-#algolia-search .search-dialog .ais-Pagination .ais-Pagination-item--disabled {
-  visibility: hidden;
-}
-#algolia-search .search-dialog #algolia-hits > div {
-  overflow-y: overlay;
-  margin: 0 -20px;
-  padding: 0 22px;
-  max-height: calc(80vh - 220px);
-}
-@media screen and (max-width: 768px) {
-  #algolia-search .search-dialog #algolia-hits > div {
-    max-height: none;
-    height: calc(var(--search-height) - 235px);
-  }
-}
-#algolia-search .search-dialog #algolia-info div {
-  display: inline;
-}
-#algolia-search .search-dialog #algolia-info .algolia-poweredBy {
-  float: right;
-  vertical-align: text-top;
-}
-#algolia-search .search-dialog #algolia-info .algolia-poweredBy svg {
-  height: 1.1em;
 }
