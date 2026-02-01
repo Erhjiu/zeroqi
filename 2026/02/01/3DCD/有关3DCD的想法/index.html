@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>有关3DCD的想法 | 零</title><meta name="author" content="Erhjiu"><meta name="copyright" content="Erhjiu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="直接使用端到端的3DCD检测 目前未实现无监督或若监督，可从这方面入手，[相关论文]{https:&#x2F;&#x2F;ieeexplore.ieee.org&#x2F;abstract&#x2F;document&#x2F;10019593&#x2F;metrics#metrics} 使用前沿领域的transformer或mamba 对数据集进行处理，目前数据集存在的问题有：   缺少标签 数据集不平衡 数据集hungry   尝试使用GAN生成数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有关3DCD的想法">
+<meta property="og:url" content="https://zeroqi.xyz/2026/02/01/3DCD/%E6%9C%89%E5%85%B33DCD%E7%9A%84%E6%83%B3%E6%B3%95/index.html">
+<meta property="og:site_name" content="零">
+<meta property="og:description" content="直接使用端到端的3DCD检测 目前未实现无监督或若监督，可从这方面入手，[相关论文]{https:&#x2F;&#x2F;ieeexplore.ieee.org&#x2F;abstract&#x2F;document&#x2F;10019593&#x2F;metrics#metrics} 使用前沿领域的transformer或mamba 对数据集进行处理，目前数据集存在的问题有：   缺少标签 数据集不平衡 数据集hungry   尝试使用GAN生成数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zeroqi.xyz/img/avatar.jpg">
+<meta property="article:published_time" content="2026-02-01T12:10:00.000Z">
+<meta property="article:modified_time" content="2026-02-01T12:10:38.195Z">
+<meta property="article:author" content="Erhjiu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zeroqi.xyz/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "有关3DCD的想法",
+  "url": "https://zeroqi.xyz/2026/02/01/3DCD/%E6%9C%89%E5%85%B33DCD%E7%9A%84%E6%83%B3%E6%B3%95/",
+  "image": "https://zeroqi.xyz/img/avatar.jpg",
+  "datePublished": "2026-02-01T12:10:00.000Z",
+  "dateModified": "2026-02-01T12:10:38.195Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Erhjiu",
+      "url": "https://zeroqi.xyz/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/my_favicon.ico"><link rel="canonical" href="https://zeroqi.xyz/2026/02/01/3DCD/%E6%9C%89%E5%85%B33DCD%E7%9A%84%E6%83%B3%E6%B3%95/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '有关3DCD的想法',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(https://pic.netbian.com/uploads/allimg/250622/220039-17506008390cf6.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">零</span></a><a class="nav-page-title" href="/"><span class="site-name">有关3DCD的想法</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">有关3DCD的想法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-02-01T12:10:00.000Z" title="发表于 2026-02-01 20:10:00">2026-02-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-02-01T12:10:38.195Z" title="更新于 2026-02-01 20:10:38">2026-02-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/3DCD/">3DCD</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><ol>
+<li>直接使用端到端的3DCD检测</li>
+<li>目前未实现无监督或若监督，可从这方面入手，[相关论文]{<a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/abstract/document/10019593/metrics#metrics}">https://ieeexplore.ieee.org/abstract/document/10019593/metrics#metrics}</a></li>
+<li>使用前沿领域的transformer或mamba</li>
+<li>对数据集进行处理，目前数据集存在的问题有：</li>
+</ol>
+<ul>
+<li>缺少标签</li>
+<li>数据集不平衡</li>
+<li>数据集hungry</li>
+</ul>
+<ol>
+<li>尝试使用GAN生成数据集</li>
+<li>尝试用多模态特征融合，将点云和图像特征融合</li>
+<li>孪生神经网络，相关论文：</li>
+</ol>
+<ul>
+<li>SiamKPConv</li>
+<li>SiamGCN-GCA</li>
+<li>SiamVFE</li>
+<li>3DCDNet</li>
+</ul>
+</article><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/02/01/3DCD/%E5%8F%98%E5%8C%96%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95/" title="变化检测方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">变化检测方法</div></div><div class="info-2"><div class="info-item-1">将点云投影到 2.5D 的 DSM 或距离图像，然后利用 2D 变化检测技术进行。本文按“基于像素&#x2F;基于点”梳理常见思路，并给出 dDSM 与 MRF 的极简示例。 基于像素dDSMdDSM（Dense Deep Sparse Model）是一种基于像素的图像分类模型，它将图像的每个像素都作为输入，并使用卷积神经网络进行分类。通过简单的减去DSM得到像素级的二进制变化图，后处理有形态学滤波和阈值处理、分割、分类、去除噪声和未配准引起的假警报，但是会由于信息损失而无法检测细致变化，适合更大范围明显变化的检测。比如城市范围内的建筑物变化检测。以下是一个简单的Python代码示例： import numpy as npimport cv2# dDSM：对两个时相的 DSM 做差分，阈值化得到变化掩码# dsm_t1/dsm_t2：两期 DSM（单位可理解为“高度”，同尺度）# thresh：阈值，越大越不敏感；ksize：形态学滤波核大小def ddsm_change(dsm_t1, dsm_t2, thresh=1.0, ksize=3):    # 1)...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Erhjiu</div><div class="author-info-description">一个关于3D城市变化检测的博客</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Erhjiu" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:2912066768@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/02/01/3DCD/%E6%9C%89%E5%85%B33DCD%E7%9A%84%E6%83%B3%E6%B3%95/" title="有关3DCD的想法">有关3DCD的想法</a><time datetime="2026-02-01T12:10:00.000Z" title="发表于 2026-02-01 20:10:00">2026-02-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/02/01/3DCD/%E5%8F%98%E5%8C%96%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95/" title="变化检测方法">变化检测方法</a><time datetime="2026-02-01T06:14:00.000Z" title="发表于 2026-02-01 14:14:00">2026-02-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/31/3DCD/%E4%B8%93%E4%B8%9A%E5%90%8D%E8%AF%8D,/" title="专业名词">专业名词</a><time datetime="2026-01-31T12:52:00.000Z" title="发表于 2026-01-31 20:52:00">2026-01-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/31/3DCD/%E6%95%B0%E6%8D%AE%E9%9B%86/" title="数据集">数据集</a><time datetime="2026-01-31T12:25:00.000Z" title="发表于 2026-01-31 20:25:00">2026-01-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/18/ML/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" title="线性回归模型">线性回归模型</a><time datetime="2025-07-18T02:18:56.586Z" title="发表于 2025-07-18 10:18:56">2025-07-18</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: rgb(13,13,13);"><div id="footer-wrap"><div class="footer_custom_text">「保持好奇」</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

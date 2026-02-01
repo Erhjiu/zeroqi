@@ -1,0 +1,187 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>变化检测方法 | 零</title><meta name="author" content="Erhjiu"><meta name="copyright" content="Erhjiu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="将点云投影到 2.5D 的 DSM 或距离图像，然后利用 2D 变化检测技术进行。本文按“基于像素&#x2F;基于点”梳理常见思路，并给出 dDSM 与 MRF 的极简示例。 基于像素dDSMdDSM（Dense Deep Sparse Model）是一种基于像素的图像分类模型，它将图像的每个像素都作为输入，并使用卷积神经网络进行分类。通过简单的减去DSM得到像素级的二进制变化图，后处理有形态学滤">
+<meta property="og:type" content="article">
+<meta property="og:title" content="变化检测方法">
+<meta property="og:url" content="https://zeroqi.xyz/2026/02/01/3DCD/%E5%8F%98%E5%8C%96%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="零">
+<meta property="og:description" content="将点云投影到 2.5D 的 DSM 或距离图像，然后利用 2D 变化检测技术进行。本文按“基于像素&#x2F;基于点”梳理常见思路，并给出 dDSM 与 MRF 的极简示例。 基于像素dDSMdDSM（Dense Deep Sparse Model）是一种基于像素的图像分类模型，它将图像的每个像素都作为输入，并使用卷积神经网络进行分类。通过简单的减去DSM得到像素级的二进制变化图，后处理有形态学滤">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zeroqi.xyz/img/avatar.jpg">
+<meta property="article:published_time" content="2026-02-01T06:14:00.000Z">
+<meta property="article:modified_time" content="2026-02-01T12:11:12.079Z">
+<meta property="article:author" content="Erhjiu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zeroqi.xyz/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "变化检测方法",
+  "url": "https://zeroqi.xyz/2026/02/01/3DCD/%E5%8F%98%E5%8C%96%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95/",
+  "image": "https://zeroqi.xyz/img/avatar.jpg",
+  "datePublished": "2026-02-01T06:14:00.000Z",
+  "dateModified": "2026-02-01T12:11:12.079Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Erhjiu",
+      "url": "https://zeroqi.xyz/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/my_favicon.ico"><link rel="canonical" href="https://zeroqi.xyz/2026/02/01/3DCD/%E5%8F%98%E5%8C%96%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '变化检测方法',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(https://pic.netbian.com/uploads/allimg/250622/220039-17506008390cf6.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">零</span></a><a class="nav-page-title" href="/"><span class="site-name">变化检测方法</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">变化检测方法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-02-01T06:14:00.000Z" title="发表于 2026-02-01 14:14:00">2026-02-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-02-01T12:11:12.079Z" title="更新于 2026-02-01 20:11:12">2026-02-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/3DCD/">3DCD</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>将点云投影到 2.5D 的 DSM 或距离图像，然后利用 2D 变化检测技术进行。本文按“基于像素&#x2F;基于点”梳理常见思路，并给出 dDSM 与 MRF 的极简示例。</p>
+<h2 id="基于像素"><a href="#基于像素" class="headerlink" title="基于像素"></a>基于像素</h2><h3 id="dDSM"><a href="#dDSM" class="headerlink" title="dDSM"></a>dDSM</h3><p>dDSM（Dense Deep Sparse Model）是一种基于像素的图像分类模型，它将图像的每个像素都作为输入，并使用卷积神经网络进行分类。通过简单的减去DSM得到像素级的二进制变化图，后处理有形态学滤波和阈值处理、分割、分类、去除噪声和未配准引起的假警报，但是会由于信息损失而无法检测细致变化，适合更大范围明显变化的检测。比如城市范围内的建筑物变化检测。以下是一个简单的Python代码示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"></span><br><span class="line"><span class="comment"># dDSM：对两个时相的 DSM 做差分，阈值化得到变化掩码</span></span><br><span class="line"><span class="comment"># dsm_t1/dsm_t2：两期 DSM（单位可理解为“高度”，同尺度）</span></span><br><span class="line"><span class="comment"># thresh：阈值，越大越不敏感；ksize：形态学滤波核大小</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ddsm_change</span>(<span class="params">dsm_t1, dsm_t2, thresh=<span class="number">1.0</span>, ksize=<span class="number">3</span></span>):</span><br><span class="line">    <span class="comment"># 1) 绝对差分：突出变化区域</span></span><br><span class="line">    diff = np.<span class="built_in">abs</span>(dsm_t2 - dsm_t1)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2) 阈值二值化：变化为 255，未变化为 0</span></span><br><span class="line">    change = (diff &gt; thresh).astype(np.uint8) * <span class="number">255</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3) 形态学开运算：去除孤立噪声点</span></span><br><span class="line">    kernel = np.ones((ksize, ksize), np.uint8)</span><br><span class="line">    change = cv2.morphologyEx(change, cv2.MORPH_OPEN, kernel)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> change</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4) 构造模拟 DSM：t1 为随机地表，t2 在局部抬升</span></span><br><span class="line">h, w = <span class="number">256</span>, <span class="number">256</span></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line">dsm_t1 = np.random.rand(h, w).astype(np.float32) * <span class="number">10</span></span><br><span class="line"></span><br><span class="line">dsm_t2 = dsm_t1.copy()</span><br><span class="line"><span class="comment"># 在一个矩形区域“加高”，模拟新增建筑</span></span><br><span class="line">dsm_t2[<span class="number">80</span>:<span class="number">140</span>, <span class="number">120</span>:<span class="number">180</span>] += <span class="number">3.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5) 调用检测函数，得到变化掩码</span></span><br><span class="line">mask = ddsm_change(dsm_t1, dsm_t2, thresh=<span class="number">1.5</span>, ksize=<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6) 打印结果信息：尺寸、类型与最大值（是否包含变化）</span></span><br><span class="line"><span class="built_in">print</span>(mask.shape, mask.dtype, <span class="built_in">int</span>(mask.<span class="built_in">max</span>()))</span><br></pre></td></tr></table></figure>
+
+<h3 id="2D机器学习"><a href="#2D机器学习" class="headerlink" title="2D机器学习"></a>2D机器学习</h3><p>2D 机器学习将每个像素或小邻域作为样本，结合手工特征进行分类。常见流程为：</p>
+<ol>
+<li>预处理：归一化、平滑、配准误差修正等</li>
+<li>特征构建：高程差、强度、纹理、形态学统计量等</li>
+<li>分类器：随机森林、SVM、梯度提升树等</li>
+<li>后处理：形态学滤波、连通域剔除、边界修正</li>
+</ol>
+<p>马尔科夫随机场（MRF）会显式建模邻域像素间的几何与语义关系，通过“数据项 + 平滑项”的方式抑制噪声与孤立误检。它对类别不平衡更鲁棒，但对参数敏感，且计算量会随图像尺寸增大。</p>
+<p>MRF Python 代码示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 简化版 MRF：用 ICM 在二值变化图上做平滑</span></span><br><span class="line"><span class="comment"># unary 表示像素属于“变化/不变”的代价（这里用随机示意）</span></span><br><span class="line"><span class="comment"># beta 越大越强调邻域一致性</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">icm_mrf</span>(<span class="params">unary, beta=<span class="number">1.0</span>, iters=<span class="number">5</span></span>):</span><br><span class="line">    h, w, _ = unary.shape</span><br><span class="line">    labels = np.argmin(unary, axis=<span class="number">2</span>).astype(np.int32)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(iters):</span><br><span class="line">        <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(h):</span><br><span class="line">            <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(w):</span><br><span class="line">                nbs = []</span><br><span class="line">                <span class="keyword">if</span> y &gt; <span class="number">0</span>:</span><br><span class="line">                    nbs.append(labels[y - <span class="number">1</span>, x])</span><br><span class="line">                <span class="keyword">if</span> y &lt; h - <span class="number">1</span>:</span><br><span class="line">                    nbs.append(labels[y + <span class="number">1</span>, x])</span><br><span class="line">                <span class="keyword">if</span> x &gt; <span class="number">0</span>:</span><br><span class="line">                    nbs.append(labels[y, x - <span class="number">1</span>])</span><br><span class="line">                <span class="keyword">if</span> x &lt; w - <span class="number">1</span>:</span><br><span class="line">                    nbs.append(labels[y, x + <span class="number">1</span>])</span><br><span class="line">                smooth0 = beta * <span class="built_in">sum</span>(nb != <span class="number">0</span> <span class="keyword">for</span> nb <span class="keyword">in</span> nbs)</span><br><span class="line">                smooth1 = beta * <span class="built_in">sum</span>(nb != <span class="number">1</span> <span class="keyword">for</span> nb <span class="keyword">in</span> nbs)</span><br><span class="line">                e0 = unary[y, x, <span class="number">0</span>] + smooth0</span><br><span class="line">                e1 = unary[y, x, <span class="number">1</span>] + smooth1</span><br><span class="line">                labels[y, x] = <span class="number">0</span> <span class="keyword">if</span> e0 &lt;= e1 <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> labels</span><br><span class="line"></span><br><span class="line">h, w = <span class="number">64</span>, <span class="number">64</span></span><br><span class="line">np.random.seed(<span class="number">7</span>)</span><br><span class="line"><span class="comment"># 假设差分图差值越大越倾向“变化”</span></span><br><span class="line">diff = np.random.rand(h, w)</span><br><span class="line">unary = np.zeros((h, w, <span class="number">2</span>), dtype=np.float32)</span><br><span class="line">unary[..., <span class="number">1</span>] = <span class="number">1.0</span> - diff  <span class="comment"># 变化代价</span></span><br><span class="line">unary[..., <span class="number">0</span>] = diff        <span class="comment"># 不变代价</span></span><br><span class="line"></span><br><span class="line">labels = icm_mrf(unary, beta=<span class="number">1.2</span>, iters=<span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(labels.shape, labels.dtype, <span class="built_in">int</span>(labels.<span class="built_in">max</span>()))</span><br></pre></td></tr></table></figure>
+
+<h3 id="2D深度学习"><a href="#2D深度学习" class="headerlink" title="2D深度学习"></a>2D深度学习</h3><p>2D 深度学习通常以成对影像（DSM、正射影像或深度图）为输入，通过共享权重的孪生结构提取差异特征，再进行像素级变化判别。常见思路包括 Siamese 网络、基于 UNet 的编码器-解码器结构，以及加入注意力或对比学习增强变化表示。GAN 也可在 Siamese 框架下进行变化检测，用于提升细微变化的可分性（Nagy，2021）。</p>
+<p>为了保留细节，常见做法是将下采样阶段的高分辨率特征与解码阶段的转置卷积层进行跳跃连接，从而提高边界与小尺度变化的识别效果。</p>
+<h2 id="基于点"><a href="#基于点" class="headerlink" title="基于点"></a>基于点</h2><p>点云方法直接在 3D 空间建模变化，优势是保留了几何细节，但对配准误差和噪声更敏感。</p>
+<h3 id="距离"><a href="#距离" class="headerlink" title="距离"></a>距离</h3><ol>
+<li>点到点距离（C2C），常与 Hausdorff 距离结合评估变化。</li>
+<li>多尺度模型到模型比较（M3C2），用点到局部平面或多尺度网格的距离替代点对点距离，更稳健。</li>
+<li>点到三角形距离，适合网格化场景的变化检测。</li>
+<li>点到平面距离，通常需再做阈值或聚类后处理，否则结果容易呈现稀疏散点。</li>
+</ol>
+<h3 id="机器学习"><a href="#机器学习" class="headerlink" title="机器学习"></a>机器学习</h3><p>点云变化检测可被视作分类问题：既检测几何变化，也学习语义类别，实现几何变化检测与语义分割的联合。传统方法依赖手工特征（高度、密度、邻域结构等）配合随机森林或 SVM，效果稳定但泛化依赖特征设计。</p>
+<p>近年来也有基于深度学习的点云方法，如 PointNet++、KPConv、Minkowski&#x2F;稀疏卷积等，通过端到端学习特征，通常能获得更好的跨场景表现。</p>
+</article><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/31/3DCD/%E4%B8%93%E4%B8%9A%E5%90%8D%E8%AF%8D,/" title="专业名词"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">专业名词</div></div><div class="info-2"><div class="info-item-1"> 2D、2.5D和3D   维度 含义 类比    2D 普通照片，只有平面（X,Y） 俯视平面图，看不到高度   2.5D 深度图&#x2F;高度图，每个像素存一个高度值（Z） 像浮雕画，有凹凸感但不是真立体   3D 真正的立体点云，每个点都有XYZ坐标 可以旋转查看的3D模型    DSM(数字表面模型)生成:...</div></div></div></a><a class="pagination-related" href="/2026/02/01/3DCD/%E6%9C%89%E5%85%B33DCD%E7%9A%84%E6%83%B3%E6%B3%95/" title="有关3DCD的想法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">有关3DCD的想法</div></div><div class="info-2"><div class="info-item-1"> 直接使用端到端的3DCD检测 目前未实现无监督或若监督，可从这方面入手，[相关论文]{https://ieeexplore.ieee.org/abstract/document/10019593/metrics#metrics} 使用前沿领域的transformer或mamba 对数据集进行处理，目前数据集存在的问题有：   缺少标签 数据集不平衡 数据集hungry   尝试使用GAN生成数据集 尝试用多模态特征融合，将点云和图像特征融合 孪生神经网络，相关论文：   SiamKPConv SiamGCN-GCA SiamVFE 3DCDNet  </div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Erhjiu</div><div class="author-info-description">一个关于3D城市变化检测的博客</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Erhjiu" target="_blank" title="Github"><i class="fab fa-github" style="color: #hdhfbb;"></i></a><a class="social-icon" href="mailto:2912066768@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #000000;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%83%8F%E7%B4%A0"><span class="toc-number">1.</span> <span class="toc-text">基于像素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dDSM"><span class="toc-number">1.1.</span> <span class="toc-text">dDSM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2D%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.2.</span> <span class="toc-text">2D机器学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2D%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.3.</span> <span class="toc-text">2D深度学习</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">基于点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%9D%E7%A6%BB"><span class="toc-number">2.1.</span> <span class="toc-text">距离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="toc-number">2.2.</span> <span class="toc-text">机器学习</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/02/01/3DCD/%E6%9C%89%E5%85%B33DCD%E7%9A%84%E6%83%B3%E6%B3%95/" title="有关3DCD的想法">有关3DCD的想法</a><time datetime="2026-02-01T12:10:00.000Z" title="发表于 2026-02-01 20:10:00">2026-02-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/02/01/3DCD/%E5%8F%98%E5%8C%96%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95/" title="变化检测方法">变化检测方法</a><time datetime="2026-02-01T06:14:00.000Z" title="发表于 2026-02-01 14:14:00">2026-02-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/31/3DCD/%E4%B8%93%E4%B8%9A%E5%90%8D%E8%AF%8D,/" title="专业名词">专业名词</a><time datetime="2026-01-31T12:52:00.000Z" title="发表于 2026-01-31 20:52:00">2026-01-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/31/3DCD/%E6%95%B0%E6%8D%AE%E9%9B%86/" title="数据集">数据集</a><time datetime="2026-01-31T12:25:00.000Z" title="发表于 2026-01-31 20:25:00">2026-01-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/18/ML/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" title="线性回归模型">线性回归模型</a><time datetime="2025-07-18T02:18:56.586Z" title="发表于 2025-07-18 10:18:56">2025-07-18</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: rgb(13,13,13);"><div id="footer-wrap"><div class="footer_custom_text">「保持好奇」</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
